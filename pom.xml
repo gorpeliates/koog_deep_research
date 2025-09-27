@@ -88,6 +88,16 @@
             <artifactId>koog-agents-jvm</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.cdimascio</groupId>
+            <artifactId>dotenv-kotlin</artifactId>
+            <version>6.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlinx</groupId>
+            <artifactId>kotlinx-coroutines-core</artifactId>
+            <version>1.10.2</version>
+        </dependency>
     </dependencies>
 
 </project>
