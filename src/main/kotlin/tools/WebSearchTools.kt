@@ -10,16 +10,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
-import io.ktor.client.request.header
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
 import io.ktor.http.URLBuilder
-import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -48,7 +41,6 @@ class WebSearchTools : ToolSet {
         prettyPrint = true
     }
     private val dotEnv = dotenv()
-    private val brightDataKey = dotEnv["BRIGHTDATA_API_KEY"]
     private val googleSearchKey = dotEnv["GOOGLE_SEARCH_API_KEY"]
     private val searchEngineId = dotEnv["SEARCH_ENGINE_ID"]
 
