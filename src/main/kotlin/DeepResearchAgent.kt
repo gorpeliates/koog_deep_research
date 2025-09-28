@@ -7,15 +7,22 @@ import ai.koog.agents.core.dsl.builder.strategy
 import ai.koog.agents.core.dsl.extension.nodeExecuteTool
 import ai.koog.agents.core.dsl.extension.nodeLLMRequest
 import ai.koog.agents.core.dsl.extension.nodeLLMRequestStructured
+import ai.koog.agents.core.dsl.extension.nodeUpdatePrompt
 import ai.koog.agents.core.dsl.extension.onAssistantMessage
 import ai.koog.agents.core.dsl.extension.onToolCall
 import ai.koog.agents.core.tools.ToolRegistry
 import ai.koog.agents.core.tools.reflect.asTools
 import ai.koog.agents.ext.tool.AskUser
 import ai.koog.agents.ext.tool.SayToUser
+import ai.koog.agents.features.opentelemetry.feature.OpenTelemetry
+import ai.koog.agents.features.tracing.feature.Tracing
+import ai.koog.agents.features.tracing.writer.TraceFeatureMessageLogWriter
 import ai.koog.prompt.executor.clients.openai.OpenAIModels
 import ai.koog.prompt.executor.llms.all.simpleOpenAIExecutor
 import io.github.cdimascio.dotenv.dotenv
+import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.exporter.otlp.http.trace.OtlpHttpSpanExporter
+import io.opentelemetry.sdk.trace.samplers.Sampler
 import kotlinx.coroutines.runBlocking
 import org.jbtasks.tools.ReportCreationTools
 import org.jbtasks.tools.WebSearchTools
@@ -34,7 +41,7 @@ class DeepResearchAgent {
 
     val strategy: AIAgentStrategy<String, String> = strategy("Research Strategy") {
 
-        val nodeCreateReportPlan by nodeLLMRequest("create-report-plan")
+        val nodeCreateReportPlan by nodeLLMRequest("create-report-plan",allowToolCalls = false)
         val nodeGenerateSearchQueries by nodeLLMRequestStructured<List<String>>("generate-search-queries")
         val nodeSearchWeb by nodeExecuteTool("web-search")
         val nodeWriteSection by nodeLLMRequestStructured<List<String>>("write-sections")
@@ -64,7 +71,21 @@ class DeepResearchAgent {
             "When creating a report, make sure to search the web about necessary topics and gather relevant information before writing each section of the report." +
                 "In the end, you should write a report in markdown format with your given tools.",
         toolRegistry = toolRegistry,
-        maxIterations = 100
+        maxIterations = 100,
+        // just to see agent traces in a detailed manner
+        installFeatures = {
+            install(OpenTelemetry) {
+                setSampler(Sampler.alwaysOn())
+                setServiceInfo("deep-research-agent", "1.0.0")
+                addSpanExporter(
+                    OtlpHttpSpanExporter
+                        .builder()
+                        .setEndpoint("http://localhost:4318/v1/traces")
+                        .build()
+                )
+                setVerbose(true)
+            }
+        }
     )
 
     fun research(message: String) = runBlocking {

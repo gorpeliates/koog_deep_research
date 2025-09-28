@@ -10,6 +10,7 @@ class ReportCreationTools : ToolSet {
 
     private val report = File("report.md")
 
+    @Tool
     @LLMDescription("Initializes a new report file, overwriting any existing file.")
     fun initReport(): String {
         if (report.exists()) {
