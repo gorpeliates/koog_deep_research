@@ -36,4 +36,14 @@ class ReportCreationTools : ToolSet {
         return "Section with title '$title' added to the report."
     }
 
+    @Tool
+    @LLMDescription("Returns the current content of the report.")
+    fun reportContent(): String {
+        return if (report.exists()) {
+            report.readText()
+        } else {
+            "Report file does not exist."
+        }
+    }
+
 }
