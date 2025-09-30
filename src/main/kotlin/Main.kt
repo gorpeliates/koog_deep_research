@@ -9,5 +9,5 @@ fun main() {
 
     val agent = DeepResearchAgent()
 
-    runBlocking { agent.research("Create a detailed report explaining the theory of relativity.") }
+    runBlocking { agent.research("Create a report on nvidia stocks.") }
 }

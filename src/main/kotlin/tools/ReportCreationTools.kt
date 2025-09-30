@@ -5,6 +5,7 @@ import ai.koog.agents.core.tools.annotations.Tool
 import ai.koog.agents.core.tools.reflect.ToolSet
 import java.io.File
 
+@Suppress("unused")
 @LLMDescription("Tools for creating and managing reports in MARKDOWN format.")
 class ReportCreationTools : ToolSet {
 
